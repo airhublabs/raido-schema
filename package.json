@@ -1,0 +1,18 @@
+{
+  "name": "raido-schema",
+  "version": "1.0.0",
+  "description": "Raido schema",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/airhublabs/raido-schema.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/airhublabs/raido-schema/issues"
+  },
+  "homepage": "https://github.com/airhublabs/raido-schema#readme"
+}

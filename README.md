@@ -1,2 +1,2 @@
-# raido-schema
-Outlines our move to creating our own raido schema
+# Raido Schema
+Shared schema for our raido data copy

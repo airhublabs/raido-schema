@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": "./src",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "strict": true,
+    "target": "es2016",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "lib": ["es2017", "dom"],
+    "outDir": "./dist",
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true
+  }
+}

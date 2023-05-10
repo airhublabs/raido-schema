@@ -1,0 +1,365 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Aircraft {
+  id                Int              @id @default(autoincrement())
+  registration      String
+  type              String
+  version           String
+  configuration     String
+  serial_number     String?
+  name              String?
+  nick_name         String?
+  flights           Flight[]
+  roster_activities RosterActivity[]
+  created_at        DateTime         @default(now())
+}
+
+model Flight {
+  id                        Int              @id @default(autoincrement())
+  is_raido_id               Boolean?         @default(true)
+  airline_code              String?
+  icao_airline_code         String
+  flight_number             String
+  suffix                    String?
+  departure_airport_code    String
+  arrival_airport_code      String
+  diversion_airport_code    String?
+  flight_date               DateTime
+  std                       DateTime
+  sta                       DateTime
+  aircraft_registration     String
+  service_type_code         String?
+  onward_airline_code       String?
+  onward_flight_number      String?
+  onward_suffix             String?
+  status                    String
+  type                      String?
+  canceled                  Boolean?
+  departure_local_time_diff Int?
+  arrival_local_time_diff   Int?
+  ams_reasons               String?
+  complement                String?
+  co2                       Float?
+  schedule_gcdkm            String?
+  schedule_gcdnm            String?
+  project_codes             String[]
+  detailed_status           DetailedStatus[]
+  fuel_data                 FuelData[]
+  fuels                     Fuel[]
+  delays                    Delay[]
+  crew                      Crew[]
+  flight_routes             FlightRoute[]
+  roster_activities         RosterActivity[]
+  times                     RaidoTime[]
+  flight_plan               Flightplan?
+  aircraft                  Aircraft         @relation(fields: [aircraft_id], references: [id])
+  aircraft_id               Int
+  created_at                DateTime         @default(now())
+}
+
+model FlightRoute {
+  id         Int      @id @default(autoincrement())
+  route_type String
+  flight     Flight?  @relation(fields: [flight_id], references: [id])
+  flight_id  Int?
+  aiport     Airport  @relation(fields: [airport_id], references: [id])
+  airport_id Int
+  created_at DateTime @default(now())
+}
+
+model Airport {
+  id           Int           @id @default(autoincrement())
+  name         String
+  local_name   String?
+  iata         String        @unique
+  icao         String        @unique
+  country      String
+  gate         String?
+  stand        Int?
+  latitude     Float
+  longitude    Float
+  slot_level   String?
+  flight_route FlightRoute[]
+  created_at   DateTime      @default(now())
+}
+
+model Delay {
+  id         Int      @id @default(autoincrement())
+  code       String
+  code2      String
+  minutes    Int
+  flight     Flight?  @relation(fields: [flight_id], references: [id])
+  flight_id  Int?
+  created_at DateTime @default(now())
+}
+
+model Flightplan {
+  id                     Int      @id @default(autoincrement())
+  callsign               String
+  route                  String?
+  estimated_elapsed_time Int?
+  cruising_speed_level   String?
+  flight                 Flight   @relation(references: [id], fields: [flight_id])
+  flight_id              Int      @unique
+  created_at             DateTime @default(now())
+}
+
+model Fuel {
+  id            Int      @id @default(autoincrement())
+  type          String
+  source        String
+  quantity      Float
+  quantity_unit String
+  density       String
+  density_unit  String
+  flight        Flight   @relation(fields: [flight_id], references: [id])
+  flight_id     Int
+  created_at    DateTime @default(now())
+}
+
+model FuelData {
+  id           Int      @id @default(autoincrement())
+  company      String?
+  cost         Decimal
+  curreny      String?
+  payment_type String?
+  receipt      String?
+  comment      String?
+  flight       Flight   @relation(fields: [flight_id], references: [id])
+  flight_id    Int
+  created_at   DateTime @default(now())
+}
+
+model DetailedStatus {
+  id         Int      @id @default(autoincrement())
+  status     String
+  flight     Flight?  @relation(fields: [flight_id], references: [id])
+  flight_id  Int?
+  created_at DateTime @default(now())
+}
+
+model Crew {
+  id                 Int                @id @default(autoincrement())
+  employee_number    String             @unique
+  is_raido_id        Boolean?           @default(true)
+  active             Boolean
+  first_name         String
+  middle_name        String?
+  last_name          String
+  nick_name          String?
+  gender             String?
+  seniority          String?
+  operational_bases  String[]
+  rank               String
+  qualification      String
+  type               String?
+  crew_type          String
+  date_of_birth      String?
+  date_of_employment String?
+  shortcode          String
+  agency             String
+  addresses          Address[]
+  phone_numbers      PhoneNumber[]
+  emails             Email[]
+  ranks              CrewRank[]
+  qualifications     CrewQualifcation[]
+  roster_activities  RosterActivity[]
+  zoho_employee_id   String?
+  flight             Flight?            @relation(fields: [flight_id], references: [id])
+  flight_id          Int?
+  updated_at         DateTime           @default(now())
+  created_at         DateTime           @default(now())
+}
+
+model Address {
+  id             Int       @id @default(autoincrement())
+  valid_from     DateTime?
+  valid_to       DateTime?
+  priority       Int?
+  type           String?
+  comment        String?
+  street         String
+  street_number  String?
+  zip_postal     String?
+  city           String
+  country        String
+  state_province String?
+  crew           Crew?     @relation(fields: [crew_id], references: [id])
+  crew_id        Int?
+  created_at     DateTime  @default(now())
+}
+
+model Email {
+  id            Int      @id @default(autoincrement())
+  priority      Int
+  type          String
+  comment       String?
+  email_address String
+  crew          Crew?    @relation(fields: [crew_id], references: [id])
+  crew_id       Int?
+  created_at    DateTime @default(now())
+}
+
+model PhoneNumber {
+  id             Int       @id @default(autoincrement())
+  valid_from     DateTime?
+  valid_to       DateTime?
+  priority       Int
+  type           String
+  comment        String?
+  country_prefix String?
+  region_prefix  String?
+  phone_number   String
+  crew           Crew?     @relation(fields: [crew_id], references: [id])
+  crew_id        Int?
+  created_at     DateTime  @default(now())
+}
+
+model Rank {
+  id         Int        @id @default(autoincrement())
+  rank       String     @unique
+  crews      CrewRank[]
+  created_at DateTime   @default(now())
+}
+
+model CrewRank {
+  id         Int       @id @default(autoincrement())
+  valid_from DateTime?
+  valid_to   DateTime?
+  rank       Rank      @relation(fields: [rank_id], references: [id])
+  rank_id    Int
+  crew       Crew      @relation(fields: [crew_id], references: [id])
+  crew_id    Int
+  created_at DateTime  @default(now())
+}
+
+model Qualification {
+  id            Int                @id @default(autoincrement())
+  qualification String             @unique
+  crews         CrewQualifcation[]
+  created_at    DateTime           @default(now())
+}
+
+model CrewQualifcation {
+  id               Int           @id @default(autoincrement())
+  valid_from       DateTime?
+  valid_to         DateTime?
+  qualifcation     Qualification @relation(fields: [qualification_id], references: [id])
+  qualification_id Int
+  crew             Crew?         @relation(fields: [crew_id], references: [id])
+  crew_id          Int?
+  created_at       DateTime      @default(now())
+}
+
+model RosterActivity {
+  id                      Int         @id @default(autoincrement())
+  compound_index          String      @unique
+  is_raido_id             Boolean?    @default(true)
+  activity_type           String
+  activity_sub_type       String
+  start_airport_code      String
+  end_airport_code        String
+  start                   DateTime
+  end                     DateTime
+  start_local_time_diff   Int
+  end_local_time_diff     Int
+  start_base_time_diff    Int
+  end_base_time_diff      Int
+  roster_designator       String?
+  legal_exception         String?
+  credit                  Int?
+  assigned_rank           String
+  pairing_id              Int
+  activity_code           String
+  ref_unique_id           Int
+  confirmed               Boolean?
+  is_carry_over_activity  Boolean?
+  sft_fast_act_type       String?
+  project_name            String?
+  equipment_type          String?
+  equipment_version       String?
+  reference_activities    String
+  aircraft_equipment_type String?
+  aircraft_configuration  String?
+  aircraft_equipment_name String?
+  aircraft_registration   String?
+  // START CUSTOM FIELDS
+  night_fdp               String
+  block_hours             String
+  scheduled_block_hours   String
+  airborn_hours           String
+  duty                    String
+  // END CUSTOM FIELDS
+  times                   RaidoTime[]
+  flight                  Flight?     @relation(fields: [flight_id], references: [id])
+  flight_id               Int?
+  crew                    Crew?       @relation(fields: [crew_id], references: [id], onDelete: Cascade)
+  crew_id                 Int?
+  aircraft                Aircraft?   @relation(fields: [aircraft_id], references: [id])
+  aircraft_id             Int?
+  created_at              DateTime    @default(now())
+}
+
+model RaidoTime {
+  id                   Int             @id @default(autoincrement())
+  type                 String
+  date                 DateTime
+  roster_activities    RosterActivity? @relation(fields: [roster_activities_id], references: [id], onDelete: Cascade)
+  roster_activities_id Int?
+  flight               Flight?         @relation(fields: [flight_id], references: [id])
+  flight_id            Int?
+  created_at           DateTime        @default(now())
+}
+
+// Following Tables are still under construction. These tables will be used as a "master data".
+
+model RosterDesignator {
+  id                 Int      @default(autoincrement())
+  short_code         String   @unique
+  description        String?
+  active             Boolean  @default(true)
+  include_in_payroll Boolean  @default(false)
+  created_at         DateTime @default(now())
+}
+
+model RefrenceActivities {
+  id                 Int      @default(autoincrement())
+  short_code         String   @unique
+  description        String?
+  hex_color          String
+  active             Boolean  @default(true)
+  include_in_payroll Boolean  @default(false)
+  created_at         DateTime @default(now())
+}
+
+model ProjectActivities {
+  id                 Int      @default(autoincrement())
+  short_code         String   @unique
+  description        String?
+  project            String?
+  active             Boolean  @default(true)
+  include_in_payroll Boolean  @default(false)
+  created_at         DateTime @default(now())
+}
+
+enum BaseType {
+  OPERATIONAL
+  HOMEBASE
+}
+
+model Base {
+  id         Int      @id @default(autoincrement())
+  type       BaseType @default(HOMEBASE)
+  base_code  String
+  valid_from DateTime
+  valid_to   DateTime
+  updated_at DateTime @default(now())
+  created_at DateTime @default(now())
+}
