@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "Raido schema",
   "scripts": {
-    "build": "tsc"
+    "deploy": "prisma migrate deploy"
+  },
+  "prisma": {
+    "seed": "ts-node -r tsconfig-paths/register --project tsconfig.base.json  prisma/seed/seed.ts"
   },
   "repository": {
     "type": "git",
@@ -14,5 +17,11 @@
   "bugs": {
     "url": "https://github.com/airhublabs/raido-schema/issues"
   },
-  "homepage": "https://github.com/airhublabs/raido-schema#readme"
+  "homepage": "https://github.com/airhublabs/raido-schema#readme",
+  "devDependencies": {
+    "prisma": "^4.9.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.9.0"
+  }
 }
